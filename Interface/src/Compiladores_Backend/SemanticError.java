@@ -1,3 +1,5 @@
+package Compiladores_Backend;
+
 public class SemanticError extends AnalysisError
 {
     public SemanticError(String msg, int position)

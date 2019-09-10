@@ -1,3 +1,5 @@
+package Compiladores_Backend;
+
 public class Lexico implements Constants
 {
     private int position;

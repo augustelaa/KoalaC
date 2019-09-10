@@ -6,11 +6,7 @@
 package Compiladores_Interface;
 
 import java.awt.Image;
-import java.awt.Panel;
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,11 +21,15 @@ import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import Compiladores_Backend.Constants;
+import Compiladores_Backend.LexicalError;
+import Compiladores_Backend.Lexico;
+import Compiladores_Backend.Token;
 
 public class InterfaceGrafica extends javax.swing.JFrame {
 
@@ -355,6 +355,26 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 
         System.out.println("Botão Compilar");
         jTextArea2.setText("Compilação de programas ainda não foi implementada");
+
+        Lexico lexico = new Lexico();
+
+        String codigo = jTextArea1.getText();
+
+        lexico.setInput(codigo);
+
+        try
+        {
+                Token t = null;
+            while ( (t = lexico.nextToken()) != null )
+            {
+                int idLexema = t.getId();
+                System.out.println(t.toString());
+            }
+        }
+        catch ( LexicalError e )
+        {
+            System.err.println(e.getMessage() + " em " + e.getPosition());
+        }
 
     }//GEN-LAST:event_jButton7ActionPerformed
 

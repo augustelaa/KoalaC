@@ -1,3 +1,5 @@
+package Compiladores_Backend;
+
 public interface Constants extends ScannerConstants
 {
     int EPSILON  = 0;
