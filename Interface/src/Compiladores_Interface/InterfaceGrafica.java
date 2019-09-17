@@ -30,6 +30,8 @@ import Compiladores_Backend.Constants;
 import Compiladores_Backend.LexicalError;
 import Compiladores_Backend.Lexico;
 import Compiladores_Backend.Token;
+import javax.swing.JTextArea;
+import javax.swing.text.BadLocationException;
 
 public class InterfaceGrafica extends javax.swing.JFrame {
 
@@ -367,9 +369,18 @@ public class InterfaceGrafica extends javax.swing.JFrame {
                 Token t = null;
             while ( (t = lexico.nextToken()) != null )
             {
-                int idLexema = t.getId();
-                System.out.println(t.toString());
+                int idClasse = t.getId(); 
+                String lexema = t.getLexeme();
+                int position = t.getPosition();
+                String classe = getToken(idClasse);
+                System.out.println("Lexema: " + lexema);
+                System.out.println("Position: " + position);
+                System.out.println("Line: " + jTextArea1.getLineCount());
+                System.out.println("Classe: " + classe + " id: " +idClasse);
+                System.out.println("Linha: " + getLine(lexema,codigo));
+                System.out.println("________________________________________");
             }
+                System.out.println("Compilado com sucesso!");
         }
         catch ( LexicalError e )
         {
@@ -511,6 +522,70 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private String getToken(int tokenId) {
+  
+        switch (tokenId) {
+            case 0:
+                return "Epsilon";
+            case 1:
+                return "Dollar";
+            case 2:
+                return "Palavra";
+            case 3:
+                return "Identificador Int";
+            case 4:
+                return "Identificador Float";    
+            case 5:
+                return "Identificador String";
+            case 6:
+                return "Identificador Bool";
+            case 7:
+                return "Identificador Composto";
+            case 8:
+                return "Constante Int";
+            case 9:
+                return "Constante Float";
+            case 10:
+                return "Constante String";
+            case 11:
+                return "Palavra reservada";
+            case 12:
+                return "Palavra reservada";    
+            case 13:
+                return "Palavra reservada";
+            case 14:
+                return "Palavra reservada";
+            case 15:
+                return "Palavra reservada";
+            case 16:
+                return "Palavra reservada";
+            case 17:
+                return "Palavra reservada";
+            case 18:
+                return "Palavra reservada";     
+            default:
+                return "Símbolo especial";
+        }
+    }
+    
+    private int getLine(String token, String codigo) { 
+        String[] teste = codigo.split("\n");
+        for(int cont = 0; cont <= (teste.length - 1); cont++) {
+            String[] teste1 = teste[cont].split(" ");
+            if (teste1.length > 0) { 
+                for(int cont1 = 0; cont1 <= (teste1.length - 1); cont1++) {
+                    if (teste1[cont1].equalsIgnoreCase(token)) {
+                        return cont + 1;
+                    }
+                }
+            }
+            if (teste[cont].equalsIgnoreCase(token)) {
+                return cont + 1;
+            }
+        }
+        return -1;
+    }
+    
     /**
      * @param args the command line arguments
      */
