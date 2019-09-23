@@ -112,15 +112,14 @@ public class InterfaceGrafica extends javax.swing.JFrame {
         } catch (Exception ex) {
             System.out.println("Imagem não encontrada: " + ex);
         }
-        
+
     }
 
     public void executaAcao() {
         /**
          * * pega o InputMap sempre que a janela atual está em foco
          */
-        
-        
+
         InputMap iMap = jPanel1.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap aMap = jPanel1.getActionMap();
 
@@ -347,7 +346,7 @@ public class InterfaceGrafica extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        
+
         System.out.println("Botão Equipe");
         jTextArea2.setText(" * Augusto Henrique da Conceição \n * Eduardo Cesar Pasquali \n * Marcelo Luiz Jung");
 
@@ -356,7 +355,6 @@ public class InterfaceGrafica extends javax.swing.JFrame {
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
 
         System.out.println("Botão Compilar");
-        jTextArea2.setText("Compilação de programas ainda não foi implementada");
 
         Lexico lexico = new Lexico();
 
@@ -364,26 +362,30 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 
         lexico.setInput(codigo);
 
-        try
-        {
-                Token t = null;
-            while ( (t = lexico.nextToken()) != null )
-            {
-                int idClasse = t.getId(); 
+        try {
+            Token t = null;
+
+            jTextArea2.setText("Lexema\tPosition\tClasse\t\tLinha\n");
+
+            while ((t = lexico.nextToken()) != null) {
+                int idClasse = t.getId();
                 String lexema = t.getLexeme();
                 int position = t.getPosition();
                 String classe = getToken(idClasse);
                 System.out.println("Lexema: " + lexema);
                 System.out.println("Position: " + position);
                 System.out.println("Line: " + jTextArea1.getLineCount());
-                System.out.println("Classe: " + classe + " id: " +idClasse);
-                System.out.println("Linha: " + getLine(lexema,codigo));
+                System.out.println("Classe: " + classe + " id: " + idClasse);
+                System.out.println("Linha: " + getLine(lexema, codigo));
                 System.out.println("________________________________________");
+
+                //jTextArea2.append("Lexema: " + lexema + " Position: " + position + " Line: " + jTextArea1.getLineCount() + " Classe: " + classe + " id: " + idClasse + " Linha: " + getLine(lexema, codigo) + "\n");
+                jTextArea2.append(lexema + "\t" + position + "\t" + classe + "\t" + getLine(lexema, codigo) + "\t" + "\n");
             }
-                System.out.println("Compilado com sucesso!");
-        }
-        catch ( LexicalError e )
-        {
+            System.out.println("Compilado com sucesso!");
+            jTextArea2.append("Compilado com sucesso!");
+
+        } catch (LexicalError e) {
             System.err.println(e.getMessage() + " em " + e.getPosition());
         }
 
@@ -434,37 +436,37 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 
                     String diretorio[] = new String[20];
                     diretorio = Path.split("\\\\");
-                        jTextArea3.setText("Pasta escolhida: " + Path + ". Arquivo salvo: " + diretorio[diretorio.length - 1] + ".");
-                    }
-
-                } catch (Exception e) {
-                    System.out.println("Erro: " + e.getMessage());
+                    jTextArea3.setText("Pasta escolhida: " + Path + ". Arquivo salvo: " + diretorio[diretorio.length - 1] + ".");
                 }
-            } else {
-                try {
-                    String Path = jTextArea3.getText();
-                    String diretorio[] = new String[5];
-                    diretorio = Path.split("\\.");
 
-                    diretorio = diretorio[0].split("\\:");
-                    String caminhoArquivo = diretorio[1] + ":" + diretorio[2] + ".txt";
-                    caminhoArquivo = caminhoArquivo.trim();
+            } catch (Exception e) {
+                System.out.println("Erro: " + e.getMessage());
+            }
+        } else {
+            try {
+                String Path = jTextArea3.getText();
+                String diretorio[] = new String[5];
+                diretorio = Path.split("\\.");
 
-                    FileWriter arq = new FileWriter(caminhoArquivo);
-                    PrintWriter gravarArq = new PrintWriter(arq);
-                    gravarArq.printf(jTextArea1.getText());
-                    arq.close();
+                diretorio = diretorio[0].split("\\:");
+                String caminhoArquivo = diretorio[1] + ":" + diretorio[2] + ".txt";
+                caminhoArquivo = caminhoArquivo.trim();
 
-                    // -- Comentado pois não precisa atualizar a linha, pois nesse momento já estará correto
-                    //diretorio = Path.split("\\\\");
-                        //jTextArea3.setText("Pasta escolhida: " + caminhoArquivo + ". Arquivo salvo: " + diretorio[diretorio.length - 1] + ".");
-                    } catch (IOException ex) {
-                        System.out.println("Erro ao salvar: " + ex.getMessage());
-                        Logger
+                FileWriter arq = new FileWriter(caminhoArquivo);
+                PrintWriter gravarArq = new PrintWriter(arq);
+                gravarArq.printf(jTextArea1.getText());
+                arq.close();
+
+                // -- Comentado pois não precisa atualizar a linha, pois nesse momento já estará correto
+                //diretorio = Path.split("\\\\");
+                //jTextArea3.setText("Pasta escolhida: " + caminhoArquivo + ". Arquivo salvo: " + diretorio[diretorio.length - 1] + ".");
+            } catch (IOException ex) {
+                System.out.println("Erro ao salvar: " + ex.getMessage());
+                Logger
                         .getLogger(InterfaceGrafica.class
-                            .getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+                                .getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -496,21 +498,21 @@ public class InterfaceGrafica extends javax.swing.JFrame {
                     //System.out.println(ArquivoPath);
                     String diretorio[] = new String[20];
                     diretorio = ArquivoPath.split("\\\\");
-                        jTextArea3.setText("Pasta escolhida: " + ArquivoPath + ". Arquivo aberto: " + diretorio[diretorio.length - 1] + ".");
+                    jTextArea3.setText("Pasta escolhida: " + ArquivoPath + ". Arquivo aberto: " + diretorio[diretorio.length - 1] + ".");
 
-                    } catch (FileNotFoundException ex) {
-                        System.out.println("Arquivo não encontrado: " + ex.getMessage());
-                        Logger
-                        .getLogger(InterfaceGrafica.class
-                            .getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
-                        System.out.println("Erro ao ler arquivo: " + ex.getMessage());
-                        Logger
-                        .getLogger(InterfaceGrafica.class
-                            .getName()).log(Level.SEVERE, null, ex);
-                    }
+                } catch (FileNotFoundException ex) {
+                    System.out.println("Arquivo não encontrado: " + ex.getMessage());
+                    Logger
+                            .getLogger(InterfaceGrafica.class
+                                    .getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    System.out.println("Erro ao ler arquivo: " + ex.getMessage());
+                    Logger
+                            .getLogger(InterfaceGrafica.class
+                                    .getName()).log(Level.SEVERE, null, ex);
                 }
-            };
+            }
+        };
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -523,57 +525,57 @@ public class InterfaceGrafica extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private String getToken(int tokenId) {
-  
+
         switch (tokenId) {
             case 0:
-                return "Epsilon";
+                return "Epsilon               ";
             case 1:
-                return "Dollar";
+                return "Dollar                ";
             case 2:
-                return "Palavra";
+                return "Palavra               ";
             case 3:
-                return "Identificador Int";
+                return "Identificador Int     ";
             case 4:
-                return "Identificador Float";    
+                return "Identificador Float   ";
             case 5:
-                return "Identificador String";
+                return "Identificador String  ";
             case 6:
-                return "Identificador Bool";
+                return "Identificador Bool    ";
             case 7:
                 return "Identificador Composto";
             case 8:
-                return "Constante Int";
+                return "Constante Int         ";
             case 9:
-                return "Constante Float";
+                return "Constante Float       ";
             case 10:
-                return "Constante String";
+                return "Constante String      ";
             case 11:
-                return "Palavra reservada";
+                return "Palavra reservada     ";
             case 12:
-                return "Palavra reservada";    
+                return "Palavra reservada     ";
             case 13:
-                return "Palavra reservada";
+                return "Palavra reservada     ";
             case 14:
-                return "Palavra reservada";
+                return "Palavra reservada     ";
             case 15:
-                return "Palavra reservada";
+                return "Palavra reservada     ";
             case 16:
-                return "Palavra reservada";
+                return "Palavra reservada     ";
             case 17:
-                return "Palavra reservada";
+                return "Palavra reservada     ";
             case 18:
-                return "Palavra reservada";     
+                return "Palavra reservada     ";
             default:
-                return "Símbolo especial";
+                return "Símbolo especial      ";
         }
     }
-    
-    private int getLine(String token, String codigo) { 
+
+    private int getLine(String token, String codigo) {
         String[] teste = codigo.split("\n");
-        for(int cont = 0; cont <= (teste.length - 1); cont++) {
+        for (int cont = 0; cont <= (teste.length - 1); cont++) {
             String[] teste1 = teste[cont].split(" ");
-            if (teste1.length > 0) { 
-                for(int cont1 = 0; cont1 <= (teste1.length - 1); cont1++) {
+            if (teste1.length > 0) {
+                for (int cont1 = 0; cont1 <= (teste1.length - 1); cont1++) {
                     if (teste1[cont1].equalsIgnoreCase(token)) {
                         return cont + 1;
                     }
@@ -585,11 +587,10 @@ public class InterfaceGrafica extends javax.swing.JFrame {
         }
         return -1;
     }
-    
+
     /**
      * @param args the command line arguments
      */
-    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
