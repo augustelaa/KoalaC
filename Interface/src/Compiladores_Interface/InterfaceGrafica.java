@@ -38,6 +38,9 @@ public class InterfaceGrafica extends javax.swing.JFrame {
     /**
      * Creates new form InterfaceGrafica
      */
+    private int line = 0;
+    private int column = 0;
+
     public InterfaceGrafica() {
         initComponents();
 
@@ -365,22 +368,17 @@ public class InterfaceGrafica extends javax.swing.JFrame {
         try {
             Token t = null;
 
-            jTextArea2.setText("Lexema\tPosition\tClasse\t\tLinha\n");
+            jTextArea2.setText("Linha\tClasse\tLexema\t\n");
+            this.line = 0;
+            this.column = 0;
 
             while ((t = lexico.nextToken()) != null) {
                 int idClasse = t.getId();
                 String lexema = t.getLexeme();
-                int position = t.getPosition();
-                String classe = getToken(idClasse);
-                System.out.println("Lexema: " + lexema);
-                System.out.println("Position: " + position);
-                System.out.println("Line: " + jTextArea1.getLineCount());
-                System.out.println("Classe: " + classe + " id: " + idClasse);
-                System.out.println("Linha: " + getLine(lexema, codigo));
-                System.out.println("________________________________________");
+                
+                 String classe = getToken(idClasse);
 
-                //jTextArea2.append("Lexema: " + lexema + " Position: " + position + " Line: " + jTextArea1.getLineCount() + " Classe: " + classe + " id: " + idClasse + " Linha: " + getLine(lexema, codigo) + "\n");
-                jTextArea2.append(lexema + "\t" + position + "\t" + classe + "\t" + getLine(lexema, codigo) + "\t" + "\n");
+                jTextArea2.append(getLine(t.getLexeme(), codigo) + "\t" + classe + "\t" + lexema + "\t" + "\n");
             }
             System.out.println("Compilado com sucesso!");
             jTextArea2.append("Compilado com sucesso!");
@@ -388,7 +386,6 @@ public class InterfaceGrafica extends javax.swing.JFrame {
         } catch (LexicalError e) {
             System.err.println(e.getMessage() + " em " + e.getPosition());
         }
-
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
@@ -570,19 +567,19 @@ public class InterfaceGrafica extends javax.swing.JFrame {
         }
     }
 
-    private int getLine(String token, String codigo) {
-        String[] teste = codigo.split("\n");
-        for (int cont = 0; cont <= (teste.length - 1); cont++) {
+    private int getLine(String t, String code) {
+        String[] teste = code.split("\n");
+        for (int cont = this.line; cont <= (teste.length - 1); cont++) {
             String[] teste1 = teste[cont].split(" ");
             if (teste1.length > 0) {
-                for (int cont1 = 0; cont1 <= (teste1.length - 1); cont1++) {
-                    if (teste1[cont1].equalsIgnoreCase(token)) {
+                for (int cont1 = this.column; cont1 <= (teste1.length - 1); cont1++) {
+                    if (teste1[cont1].equalsIgnoreCase(t)) {
+                        this.column = cont1 + 1;
                         return cont + 1;
                     }
                 }
-            }
-            if (teste[cont].equalsIgnoreCase(token)) {
-                return cont + 1;
+                this.column = 0;
+                this.line = cont + 1;
             }
         }
         return -1;
