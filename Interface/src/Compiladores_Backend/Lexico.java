@@ -57,9 +57,10 @@ public class Lexico implements Constants
                 }
             }
         }
+        // 26; 51: palavras
         if (endState < 0 || (endState != state && tokenForState(lastState) == -2)) {
             String trecho = this.input.substring(start);
-            String mensagem = "Erro na linha " + StringUtils.getLine(trecho, this.input) + " - ";
+            String mensagem = "Erro na linha " + StringUtils.getLine(trecho, this.input, start) + " - ";
             if (lastState != 3 && lastState != 43) { // 3: constante string; 43: comentario bloco
                 mensagem += trecho + " ";
             }

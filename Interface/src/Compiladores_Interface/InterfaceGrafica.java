@@ -359,6 +359,8 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 
         Lexico lexico = new Lexico();
 
+        StringUtils.line = 0;
+
         String codigo = jTextArea1.getText();
 
         lexico.setInput(codigo);
@@ -370,11 +372,16 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 
             while ((t = lexico.nextToken()) != null) {
                 int idClasse = t.getId();
-                String lexema = t.getLexeme();
-                
-                 String classe = getToken(idClasse);
 
-                jTextArea2.append(StringUtils.getLine(t.getLexeme(), codigo) + "\t" + classe + "\t" + lexema + "\t" + "\n");
+                // Palavra
+                if (idClasse == 2) {
+                    throw new LexicalError( "Erro na linha " + StringUtils.getLine(t.getLexeme(), codigo, t.getPosition()) + " - " + t.getLexeme() + " palavra reservada inválida", t.getPosition());
+                }
+
+                String lexema = t.getLexeme();
+                String classe = getToken(idClasse);
+
+                jTextArea2.append(StringUtils.getLine(t.getLexeme(), codigo, t.getPosition()) + "\t" + classe + "\t" + lexema + "\t" + "\n");
             }
             System.out.println("Compilado com sucesso!");
             jTextArea2.append("Compilado com sucesso!");
