@@ -564,6 +564,10 @@ public class InterfaceGrafica extends javax.swing.JFrame {
                 return "Palavra reservada     ";
             case 18:
                 return "Palavra reservada     ";
+            case 19:
+                return "Palavra reservada     ";
+            case 20:
+                return "Palavra reservada     ";
             default:
                 return "Símbolo especial      ";
         }
