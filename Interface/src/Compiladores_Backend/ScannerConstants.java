@@ -1,5 +1,4 @@
 package Compiladores_Backend;
-
 public interface ScannerConstants
 {
     int[] SCANNER_TABLE_INDEXES = 
@@ -2278,23 +2277,23 @@ public interface ScannerConstants
         {122, 62}
     };
 
-    int[] TOKEN_STATE = {-2,  0, 38, -1, -1, 25, 26, 29, 27, 20, 28, 19, 30,  8, 21, 22, 34, 31, 36, -1, -1, -1, -1, -1, 23, 24,  2, -2, -1, 33, 10, 39,  0, -1, 35, 32, 37, -1, -1, -1, -1, -1, -1, -2, 40,  9,  6,  7,  4,  3,  5,  2,  0, -1, -1, -1, -1, -1,  6,  7,  4,  3,  5 };
+    int[] TOKEN_STATE = {-2,  0, 40, -1, -1, 27, 28, 31, 29, 22, 30, 21, 32,  8, 23, 24, 36, 33, 38, -1, -1, -1, -1, -1, 25, 26,  2, -2, -1, 35, 10, 41,  0, -1, 37, 34, 39, -1, -1, -1, -1, -1, -1, -2, 42,  9,  6,  7,  4,  3,  5,  2,  0, -1, -1, -1, -1, -1,  6,  7,  4,  3,  5 };
 
     int[] SPECIAL_CASES_INDEXES =
-        { 0, 0, 0, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8 };
+        { 0, 0, 0, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10 };
 
     String[] SPECIAL_CASES_KEYS =
-        {  "input", "isFalseDo", "isTrueDo", "main", "output", "true", "types", "while" };
+        {  "false", "if", "input", "isFalseDo", "isTrueDo", "main", "output", "true", "types", "while" };
 
     int[] SPECIAL_CASES_VALUES =
-        {  11, 12, 13, 14, 15, 16, 17, 18 };
+        {  18, 16, 11, 12, 13, 14, 15, 17, 19, 20 };
 
     String[] SCANNER_ERROR =
     {
-        "símbolo inválido",
+        "Caractere n�o esperado",
         "",
         "",
-        "constante string invalida",
+        "Erro identificando constanteString",
         "Erro identificando \"&&\"",
         "",
         "",
@@ -2310,11 +2309,11 @@ public interface ScannerConstants
         "",
         "",
         "",
-        "identificador inválido",
-        "identificador inválido",
-        "identificador inválido",
-        "identificador inválido",
-        "identificador inválido",
+        "Erro identificando identificadorBool",
+        "Erro identificando identificadorComposto",
+        "Erro identificando identificadorFloat",
+        "Erro identificando identificadorInt",
+        "Erro identificando identificadorString",
         "",
         "",
         "",
@@ -2324,17 +2323,17 @@ public interface ScannerConstants
         "",
         "",
         "",
-        "identificador inválido",
+        "Erro identificando constanteFloat",
         "",
         "",
         "",
-        "identificador inválido",
-        "identificador inválido",
-        "identificador inválido",
-        "identificador inválido",
-        "identificador inválido",
+        "Erro identificando identificadorBool",
+        "Erro identificando identificadorComposto",
+        "Erro identificando identificadorFloat",
+        "Erro identificando identificadorInt",
+        "Erro identificando identificadorString",
         "Erro identificando palavra",
-        "comentario de bloco inválido ou não finalizado",
+        "Erro identificando <ignorar>",
         "",
         "",
         "",
@@ -2344,11 +2343,11 @@ public interface ScannerConstants
         "",
         "",
         "",
-        "identificador inválido",
-        "identificador inválido",
-        "identificador inválido",
-        "identificador inválido",
-        "identificador inválido",
+        "Erro identificando identificadorBool",
+        "Erro identificando identificadorComposto",
+        "Erro identificando identificadorFloat",
+        "Erro identificando identificadorInt",
+        "Erro identificando identificadorString",
         "",
         "",
         "",

@@ -1,5 +1,4 @@
 package Compiladores_Backend;
-
 public class Token
 {
     private int id;

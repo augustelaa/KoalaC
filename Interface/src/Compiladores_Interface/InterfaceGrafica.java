@@ -27,7 +27,6 @@ import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import Biblioteca.StringUtils;
-import Compiladores_Backend.Constants;
 import Compiladores_Backend.LexicalError;
 import Compiladores_Backend.Lexico;
 import Compiladores_Backend.Token;

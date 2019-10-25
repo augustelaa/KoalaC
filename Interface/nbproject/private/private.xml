@@ -6,5 +6,11 @@
             <file>file:/C:/Users/Eduardo/Documents/NetBeansProjects/Semestre_2019_2_Compiladores/src/Compiladores_Interface/main.java</file>
             <file>file:/C:/Users/Eduardo/Documents/NetBeansProjects/Semestre_2019_2_Compiladores/src/Compiladores_Interface/InterfaceGrafica.java</file>
         </group>
+        <group>
+            <file>file:/C:/Git/KoalaC/Interface/src/Compiladores_Backend/Constants.java</file>
+            <file>file:/C:/Git/KoalaC/Interface/src/Compiladores_Backend/Token.java</file>
+            <file>file:/C:/Git/KoalaC/Interface/src/Compiladores_Backend/Lexico.java</file>
+            <file>file:/C:/Git/KoalaC/Interface/src/Compiladores_Interface/InterfaceGrafica.java</file>
+        </group>
     </open-files>
 </project-private>

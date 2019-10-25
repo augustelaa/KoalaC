@@ -1,5 +1,4 @@
 package Compiladores_Backend;
-
 public class AnalysisError extends Exception
 {
     private int position;
