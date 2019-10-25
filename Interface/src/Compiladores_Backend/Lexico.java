@@ -1,7 +1,3 @@
-package Compiladores_Backend;
-
-import Biblioteca.StringUtils;
-
 public class Lexico implements Constants
 {
     private int position;
@@ -57,16 +53,8 @@ public class Lexico implements Constants
                 }
             }
         }
-        // 26; 51: palavras
-        if (endState < 0 || (endState != state && tokenForState(lastState) == -2)) {
-            String trecho = this.input.substring(start);
-            String mensagem = "Erro na linha " + StringUtils.getLine(trecho, this.input, start) + " - ";
-            if (lastState != 3 && lastState != 43) { // 3: constante string; 43: comentario bloco
-                mensagem += trecho + " ";
-            }
-            mensagem += SCANNER_ERROR[lastState];
-            throw new LexicalError(mensagem, start);
-        }
+        if (endState < 0 || (endState != state && tokenForState(lastState) == -2))
+            throw new LexicalError(SCANNER_ERROR[lastState], start);
 
         position = end;
 

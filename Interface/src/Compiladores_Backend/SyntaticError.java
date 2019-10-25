@@ -1,5 +1,3 @@
-package Compiladores_Backend;
-
 public class SyntaticError extends AnalysisError
 {
     public SyntaticError(String msg, int position)
