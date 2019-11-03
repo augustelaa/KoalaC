@@ -29,6 +29,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import Biblioteca.StringUtils;
 import Compiladores_Backend.LexicalError;
 import Compiladores_Backend.Lexico;
+import Compiladores_Backend.SemanticError;
+import Compiladores_Backend.Semantico;
+import Compiladores_Backend.Sintatico;
+import Compiladores_Backend.SyntaticError;
 import Compiladores_Backend.Token;
 import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
@@ -357,6 +361,8 @@ public class InterfaceGrafica extends javax.swing.JFrame {
         System.out.println("Botão Compilar");
 
         Lexico lexico = new Lexico();
+        Sintatico sintatico = new Sintatico();
+        Semantico semantico = new Semantico();
 
         StringUtils.line = 0;
 
@@ -365,28 +371,25 @@ public class InterfaceGrafica extends javax.swing.JFrame {
         lexico.setInput(codigo);
 
         try {
-            Token t = null;
 
-            jTextArea2.setText("Linha\tClasse\tLexema\t\n");
-
-            while ((t = lexico.nextToken()) != null) {
-                int idClasse = t.getId();
-
-                // Palavra
-                if (idClasse == 2) {
-                    throw new LexicalError( "Erro na linha " + StringUtils.getLine(t.getLexeme(), codigo, t.getPosition()) + " - " + t.getLexeme() + " palavra reservada inválida", t.getPosition());
-                }
-
-                String lexema = t.getLexeme();
-                String classe = getToken(idClasse);
-
-                jTextArea2.append(StringUtils.getLine(t.getLexeme(), codigo, t.getPosition()) + "\t" + classe + "\t" + lexema + "\t" + "\n");
-            }
+            sintatico.parse(lexico, semantico);
             System.out.println("Compilado com sucesso!");
             jTextArea2.append("Compilado com sucesso!");
 
         } catch (LexicalError e) {
             jTextArea2.setText(e.getMessage());
+        } catch (SyntaticError ex) {
+            try {
+                int positionLexeme = Integer.parseInt(ex.toString().substring(ex.toString().lastIndexOf("@") + 2));
+                Token token;
+                lexico.setPosition(positionLexeme);
+                token = lexico.nextToken();
+                this.jTextArea2.setText(ex.toString() + token.getLexeme());
+            } catch (LexicalError ex1) {
+                Logger.getLogger(InterfaceGrafica.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        } catch (SemanticError ex) {
+            Logger.getLogger(InterfaceGrafica.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton7ActionPerformed
 

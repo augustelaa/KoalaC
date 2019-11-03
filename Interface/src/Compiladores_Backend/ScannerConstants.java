@@ -2294,7 +2294,7 @@ public interface ScannerConstants
         "Caractere n�o esperado",
         "",
         "",
-        "Erro identificando constanteString",
+        "constante string inválida",
         "Erro identificando \"&&\"",
         "",
         "",
