@@ -359,6 +359,7 @@ public class InterfaceGrafica extends javax.swing.JFrame {
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
 
         System.out.println("Botão Compilar");
+        jTextArea2.setText("");
 
         Lexico lexico = new Lexico();
         Sintatico sintatico = new Sintatico();
@@ -367,31 +368,38 @@ public class InterfaceGrafica extends javax.swing.JFrame {
         StringUtils.line = 0;
 
         String codigo = jTextArea1.getText();
+        if (!codigo.trim().isEmpty()) {
 
-        lexico.setInput(codigo);
+            lexico.setInput(codigo);
 
-        try {
-
-            sintatico.parse(lexico, semantico);
-            System.out.println("Compilado com sucesso!");
-            jTextArea2.append("Compilado com sucesso!");
-
-        } catch (LexicalError e) {
-            jTextArea2.setText(e.getMessage());
-        } catch (SyntaticError ex) {
             try {
-                int positionLexeme = Integer.parseInt(ex.toString().substring(ex.toString().lastIndexOf("@") + 2));
-                Token token;
-                lexico.setPosition(positionLexeme);
-                token = lexico.nextToken();
-                this.jTextArea2.setText(ex.toString() + token.getLexeme());
-            } catch (LexicalError ex1) {
-                Logger.getLogger(InterfaceGrafica.class.getName()).log(Level.SEVERE, null, ex1);
+
+                sintatico.parse(lexico, semantico);
+                System.out.println("Compilado com sucesso!");
+                jTextArea2.append("Compilado com sucesso!");
+
+            } catch (LexicalError e) {
+                jTextArea2.setText(e.getMessage());
+            } catch (SyntaticError ex) {
+                try {
+                    int positionLexeme = Integer.parseInt(ex.toString().substring(ex.toString().lastIndexOf("@") + 2));
+                    Token token;
+                    lexico.setPosition(positionLexeme);
+                    token = lexico.nextToken();
+                    String trecho = codigo.substring(positionLexeme);
+                    String mensagem = "Erro na linha " + StringUtils.getLine(trecho, codigo, positionLexeme) + " - ";
+                    mensagem += "encontrando " + token.getLexeme() + " " + ex.getLocalizedMessage();
+                    this.jTextArea2.setText(mensagem);
+                } catch (LexicalError ex1) {
+                    Logger.getLogger(InterfaceGrafica.class.getName()).log(Level.SEVERE, null, ex1);
+                }
+            } catch (SemanticError ex) {
+                Logger.getLogger(InterfaceGrafica.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (SemanticError ex) {
-            Logger.getLogger(InterfaceGrafica.class.getName()).log(Level.SEVERE, null, ex);
+        } else {
+            this.jTextArea2.setText("nenhum programa para compilar");
         }
-    }//GEN-LAST:event_jButton7ActionPerformed
+    }
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
 
