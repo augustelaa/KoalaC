@@ -369,9 +369,7 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 
         String codigo = jTextArea1.getText();
         if (!codigo.trim().isEmpty()) {
-
             lexico.setInput(codigo);
-
             try {
 
                 sintatico.parse(lexico, semantico);
@@ -388,13 +386,17 @@ public class InterfaceGrafica extends javax.swing.JFrame {
                     token = lexico.nextToken();
                     String trecho = codigo.substring(positionLexeme);
                     String mensagem = "Erro na linha " + StringUtils.getLine(trecho, codigo, positionLexeme) + " - ";
-                    mensagem += "encontrando " + token.getLexeme() + " " + ex.getLocalizedMessage();
+                    if (token != null) {
+                        mensagem += "encontrando " + token.getLexeme() + " " + ex.getLocalizedMessage();
+                    } else {
+                        mensagem += "encontrando fim de arquivo " + ex.getLocalizedMessage();
+                    }
                     this.jTextArea2.setText(mensagem);
                 } catch (LexicalError ex1) {
-                    Logger.getLogger(InterfaceGrafica.class.getName()).log(Level.SEVERE, null, ex1);
+                    jTextArea2.setText(ex1.getMessage());
                 }
             } catch (SemanticError ex) {
-                Logger.getLogger(InterfaceGrafica.class.getName()).log(Level.SEVERE, null, ex);
+                jTextArea2.setText("erro não tratado " + ex.getLocalizedMessage());
             }
         } else {
             this.jTextArea2.setText("nenhum programa para compilar");
