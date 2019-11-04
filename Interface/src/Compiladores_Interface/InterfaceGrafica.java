@@ -34,6 +34,7 @@ import Compiladores_Backend.Semantico;
 import Compiladores_Backend.Sintatico;
 import Compiladores_Backend.SyntaticError;
 import Compiladores_Backend.Token;
+import java.awt.event.KeyEvent;
 import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
 
@@ -176,14 +177,21 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+
         jPanel1.setMinimumSize(new java.awt.Dimension(900, 600));
 
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
+
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
         jTextArea1.setMinimumSize(new java.awt.Dimension(900, 400));
+        jTextArea1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextArea1KeyPressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTextArea1);
 
         jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -257,7 +265,7 @@ public class InterfaceGrafica extends javax.swing.JFrame {
         jToolBar1.add(jButton4);
         jToolBar1.add(jSeparator4);
 
-        jButton5.setText("colar [ctrl-x]");
+        jButton5.setText("colar [ctrl-v]");
         jButton5.setFocusable(false);
         jButton5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton5.setMargin(new java.awt.Insets(2, 20, 2, 20));
@@ -352,11 +360,11 @@ public class InterfaceGrafica extends javax.swing.JFrame {
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
 
         System.out.println("Botão Equipe");
-        jTextArea2.setText(" * Augusto Henrique da Conceição \n * Eduardo Cesar Pasquali \n * Marcelo Luiz Jung");
+        jTextArea2.setText(" * Augusto Henrique da Conceição \n * Marcelo Luiz Jung");
 
     }//GEN-LAST:event_jButton8ActionPerformed
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {                                         
 
         System.out.println("Botão Compilar");
         jTextArea2.setText("");
@@ -535,6 +543,14 @@ public class InterfaceGrafica extends javax.swing.JFrame {
         jTextArea3.setText("");
 
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jTextArea1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextArea1KeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_F9) {
+            jButton7ActionPerformed(null);
+        } else if (evt.getKeyCode() == KeyEvent.VK_F1) {
+            jButton8ActionPerformed(null);
+        }
+    }//GEN-LAST:event_jTextArea1KeyPressed
 
     private String getToken(int tokenId) {
 
