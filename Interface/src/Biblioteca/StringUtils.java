@@ -6,6 +6,9 @@ public class StringUtils {
         int column = 0;
 
         String[] teste = code.split("\n");
+        if (t.trim().isEmpty()) {
+            return teste.length;
+        }
         for (int cont = line; cont <= (teste.length - 1); cont++) {
             line++;
             String[] teste1 = teste[cont].split(" ");

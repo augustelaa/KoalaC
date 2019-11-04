@@ -392,11 +392,12 @@ public class InterfaceGrafica extends javax.swing.JFrame {
                     Token token;
                     lexico.setPosition(positionLexeme);
                     token = lexico.nextToken();
-                    String trecho = codigo.substring(positionLexeme);
-                    String mensagem = "Erro na linha " + StringUtils.getLine(trecho, codigo, positionLexeme) + " - ";
+                    String mensagem = "Erro na linha ";
                     if (token != null) {
+                        mensagem += StringUtils.getLine(token.getLexeme(), codigo, positionLexeme) + " - ";
                         mensagem += "encontrando " + token.getLexeme() + " " + ex.getLocalizedMessage();
                     } else {
+                        mensagem += StringUtils.getLine("", codigo, positionLexeme) + " - ";
                         mensagem += "encontrando fim de arquivo " + ex.getLocalizedMessage();
                     }
                     this.jTextArea2.setText(mensagem);
