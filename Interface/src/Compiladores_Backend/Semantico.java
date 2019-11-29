@@ -1,5 +1,9 @@
 package Compiladores_Backend;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Stack;
 
 public class Semantico implements Constants {
@@ -12,13 +16,16 @@ public class Semantico implements Constants {
         Tipos tipo2;
         switch (action) {
             case 15:
-                codigoGerado.append(".assembly extern mscorlib ..."); //COmpletar
+                codigoGerado.append(".assembly extern mscorlib ...");
+                pularLinha();
                 break;
             case 5:
                 pilha.push(Tipos.t_int64);
                 codigoGerado.append("ldc.i8 ");
                 codigoGerado.append(token.getLexeme());
-                codigoGerado.append("\n conv.r8");
+                pularLinha();
+                codigoGerado.append("conv.r8");
+                pularLinha();
                 break;
             case 1: 
                 Tipos tipo1 = pilha.pop();
@@ -43,6 +50,26 @@ public class Semantico implements Constants {
                 }
                 codigoGerado.append("add");
                 break;    
+            case 17:
+                codigoGerado.append("ret");
+                criarFonte();
+                break;
+        }
+    }
+
+    public void pularLinha() {
+        codigoGerado.append(System.getProperty("line.separator"));
+    }
+
+    public void criarFonte() {
+        File file = new File("fonte.txt");
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new FileWriter(file));
+            writer.write(codigoGerado.toString());
+            if (writer != null) writer.close();
+        } catch(IOException e) {
+            e.printStackTrace();
         }
     }
 }
