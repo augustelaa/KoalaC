@@ -12,7 +12,7 @@ public class Semantico implements Constants {
 
     StringBuilder codigoGerado = new StringBuilder();
     Stack<Tipos> pilha = new Stack<Tipos>();
-    List<String> listaVariaveis = new ArrayList<String>();
+    List<Variavel> listaVariaveis = new ArrayList<Variavel>();
     String operador = null;
 
     public void executeAction(int action, Token token) throws SemanticError {
@@ -97,6 +97,34 @@ public class Semantico implements Constants {
                 codigoGerado.append("conv.r8");
                 pularLinha();
                 break;
+            case 6:
+                pilha.push(Tipos.t_float64);
+                codigoGerado.append("ldc.r8 ");
+                codigoGerado.append(token.getLexeme());
+                pularLinha();
+                break;
+            case 7:
+                tipo1 = pilha.pop();
+                if (tipo1 == Tipos.t_float64 || tipo1 == Tipos.t_int64) {
+                    pilha.push(tipo1);
+                } else {
+                    throw new SemanticError("Erro semântico.");
+                }
+                break;
+            case 8:
+                tipo1 = pilha.pop();
+                if (tipo1 == Tipos.t_float64 || tipo1 == Tipos.t_int64) {
+                    pilha.push(tipo1);
+                } else {
+                    throw new SemanticError("Erro semântico.");
+                }
+                codigoGerado.append("ldc.i8 -1");
+                pularLinha();
+                codigoGerado.append("conv.r8");
+                pularLinha();
+                codigoGerado.append("mul");
+                pularLinha();
+                break;
             case 9:
                 operador = token.getLexeme();
                 break;
@@ -138,6 +166,17 @@ public class Semantico implements Constants {
                 codigoGerado.append("ldc.i4.0"); //REvisar
                 pularLinha();
                 break;
+            case 14:
+                tipo1 = pilha.pop();
+                if (tipo1 == Tipos.t_int64) {
+                    codigoGerado.append("conv.r8");
+                    pularLinha();
+                }
+                codigoGerado.append("call void [mscorlib]System.Console::Write(");
+                codigoGerado.append(tipo1);
+                codigoGerado.append(")");
+                pularLinha();
+                break;
             case 15:
                 codigoGerado.append(".assembly extern mscorlib ..."); //REvisar
                 pularLinha();
@@ -146,6 +185,20 @@ public class Semantico implements Constants {
                 codigoGerado.append("ret");
                 criarFonte();
                 break;
+            case 33:
+                operador = token.getLexeme();
+                Variavel variavel = variavelExiste(operador);
+                if (variavel == null) {
+                    throw new SemanticError("Erro semântico");
+                }
+                tipo1 = variavel.getTipo();
+                pilha.push(tipo1);
+                codigoGerado.append("ldloc ");
+                codigoGerado.append(operador);
+                if (tipo1 == Tipos.t_int64) {
+                    codigoGerado.append("conv.r8");
+                }
+                break;
         }
     }
 
@@ -153,16 +206,21 @@ public class Semantico implements Constants {
         codigoGerado.append(System.getProperty("line.separator"));
     }
 
-    public Boolean variavelExiste(String variavel) {
-        if (listaVariaveis.contains(variavel)) {
-            return true;
+    public Variavel variavelExiste(String id) {
+        for(Variavel v : listaVariaveis) {
+            if (v.getId() == id) {
+                return v;
+            }
         }
-        return false;
+        return null;
     }
 
-    public void adicionarVariavel(String variavel) throws Exception {
-        if (!variavelExiste(variavel)) {
-            listaVariaveis.add(variavel);
+    public void adicionarVariavel(String id, Tipos tipo) throws Exception {
+        if (variavelExiste(id) == null) {
+            Variavel v = new Variavel();
+            v.setId(id);
+            v.setTipo(tipo);
+            listaVariaveis.add(v);
         } else {
             throw new Exception("Variavel já usada.");
         }
