@@ -158,12 +158,24 @@ public class Semantico implements Constants {
                 break;
             case 11:
                 pilha.push(Tipos.t_bool);
-                codigoGerado.append("ldc.i4.1"); //REvisar
+                codigoGerado.append("ldc.i4.1");
                 pularLinha();
                 break;
             case 12:
                 pilha.push(Tipos.t_bool);
-                codigoGerado.append("ldc.i4.0"); //REvisar
+                codigoGerado.append("ldc.i4.0"); 
+                pularLinha();
+                break;
+            case 13:
+                tipo1 = pilha.pop();
+                if(tipo1.equals(Tipos.t_bool)) {
+                    pilha.push(Tipos.t_bool);
+                } else { 
+                    //Deu pai
+                }
+                codigoGerado.append("ldc.i4.1");
+                pularLinha();
+                codigoGerado.append("xor");
                 pularLinha();
                 break;
             case 14:
@@ -178,11 +190,27 @@ public class Semantico implements Constants {
                 pularLinha();
                 break;
             case 15:
-                codigoGerado.append(".assembly extern mscorlib ..."); //REvisar
+                codigoGerado.append(".assembly extern mscorlib {}"); 
+                pularLinha();
+                codigoGerado.append(".assembly _codigo_objeto {}"); 
+                pularLinha();
+                codigoGerado.append(".module _codigo_objeto.exe"); 
+                pularLinha();
+                codigoGerado.append(".class public _UNICA {"); 
                 pularLinha();
                 break;
+            case 16:
+                codigoGerado.append(".method static public void _principal() {");
+                criarFonte();
+                codigoGerado.append(".entrypoint");
+                criarFonte();
+                break;    
             case 17:
                 codigoGerado.append("ret");
+                criarFonte();
+                codigoGerado.append("}");
+                criarFonte();
+                codigoGerado.append("}");
                 criarFonte();
                 break;
             case 33:
