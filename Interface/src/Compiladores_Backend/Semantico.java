@@ -130,12 +130,24 @@ public class Semantico implements Constants {
                 break;
             case 11:
                 pilha.push(Tipos.t_bool);
-                codigoGerado.append("ldc.i4.1"); //REvisar
+                codigoGerado.append("ldc.i4.1");
                 pularLinha();
                 break;
             case 12:
                 pilha.push(Tipos.t_bool);
-                codigoGerado.append("ldc.i4.0"); //REvisar
+                codigoGerado.append("ldc.i4.0"); 
+                pularLinha();
+                break;
+            case 13:
+                tipo1 = pilha.pop();
+                if(tipo1.equals(Tipos.t_bool)) {
+                    pilha.push(Tipos.t_bool);
+                } else { 
+                    //Deu pai
+                }
+                codigoGerado.append("ldc.i4.1");
+                pularLinha();
+                codigoGerado.append("xor");
                 pularLinha();
                 break;
             case 15:
