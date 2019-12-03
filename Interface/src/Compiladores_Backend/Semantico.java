@@ -19,22 +19,7 @@ public class Semantico implements Constants {
         Tipos tipo1 = null;
         Tipos tipo2 = null;
         switch (action) {
-            case 15:
-                codigoGerado.append(".assembly extern mscorlib ..."); //REvisar
-                pularLinha();
-                break;
-            case 5:
-                pilha.push(Tipos.t_int64);
-                codigoGerado.append("ldc.i8 ");
-                codigoGerado.append(token.getLexeme());
-                pularLinha();
-                codigoGerado.append("conv.r8");
-                pularLinha();
-                break;
-            case 17:
-                codigoGerado.append("ret");
-                criarFonte();
-                break;
+
             case 1:
                 tipo1 = pilha.pop();
                 tipo2 = pilha.pop();
@@ -104,6 +89,14 @@ public class Semantico implements Constants {
 
                 }
                 break;
+            case 5:
+                pilha.push(Tipos.t_int64);
+                codigoGerado.append("ldc.i8 ");
+                codigoGerado.append(token.getLexeme());
+                pularLinha();
+                codigoGerado.append("conv.r8");
+                pularLinha();
+                break;
             case 9:
                 operador = token.getLexeme();
                 break;
@@ -139,6 +132,19 @@ public class Semantico implements Constants {
                 pilha.push(Tipos.t_bool);
                 codigoGerado.append("ldc.i4.1"); //REvisar
                 pularLinha();
+                break;
+            case 12:
+                pilha.push(Tipos.t_bool);
+                codigoGerado.append("ldc.i4.0"); //REvisar
+                pularLinha();
+                break;
+            case 15:
+                codigoGerado.append(".assembly extern mscorlib ..."); //REvisar
+                pularLinha();
+                break;
+            case 17:
+                codigoGerado.append("ret");
+                criarFonte();
                 break;
         }
     }
