@@ -12,12 +12,16 @@ public class Semantico implements Constants {
 
     StringBuilder codigoGerado = new StringBuilder();
     Stack<Tipos> pilha = new Stack<Tipos>();
-    List<Variavel> listaVariaveis = new ArrayList<Variavel>();
-    String operador = null;
+    Stack<String> listaVariaveis = new Stack<String>();
+    List<Variavel> tabelaVariaveis = new ArrayList<Variavel>();
+
 
     public void executeAction(int action, Token token) throws SemanticError {
         Tipos tipo1 = null;
         Tipos tipo2 = null;
+        Variavel variavel = null;
+        String operador = null;
+
         switch (action) {
 
             case 1:
@@ -163,14 +167,14 @@ public class Semantico implements Constants {
                 break;
             case 12:
                 pilha.push(Tipos.t_bool);
-                codigoGerado.append("ldc.i4.0"); 
+                codigoGerado.append("ldc.i4.0");
                 pularLinha();
                 break;
             case 13:
                 tipo1 = pilha.pop();
-                if(tipo1.equals(Tipos.t_bool)) {
+                if (tipo1.equals(Tipos.t_bool)) {
                     pilha.push(Tipos.t_bool);
-                } else { 
+                } else {
                     //Deu pai
                 }
                 codigoGerado.append("ldc.i4.1");
@@ -190,13 +194,13 @@ public class Semantico implements Constants {
                 pularLinha();
                 break;
             case 15:
-                codigoGerado.append(".assembly extern mscorlib {}"); 
+                codigoGerado.append(".assembly extern mscorlib {}");
                 pularLinha();
-                codigoGerado.append(".assembly _codigo_objeto {}"); 
+                codigoGerado.append(".assembly _codigo_objeto {}");
                 pularLinha();
-                codigoGerado.append(".module _codigo_objeto.exe"); 
+                codigoGerado.append(".module _codigo_objeto.exe");
                 pularLinha();
-                codigoGerado.append(".class public _UNICA {"); 
+                codigoGerado.append(".class public _UNICA {");
                 pularLinha();
                 break;
             case 16:
@@ -204,7 +208,7 @@ public class Semantico implements Constants {
                 criarFonte();
                 codigoGerado.append(".entrypoint");
                 criarFonte();
-                break;    
+                break;
             case 17:
                 codigoGerado.append("ret");
                 criarFonte();
@@ -215,7 +219,7 @@ public class Semantico implements Constants {
                 break;
             case 33:
                 operador = token.getLexeme();
-                Variavel variavel = variavelExiste(operador);
+                variavel = variavelExiste(operador);
                 if (variavel == null) {
                     throw new SemanticError("Erro semântico");
                 }
@@ -227,6 +231,55 @@ public class Semantico implements Constants {
                     codigoGerado.append("conv.r8");
                 }
                 break;
+            case 34:
+                operador = listaVariaveis.pop();
+                variavel = variavelExiste(operador);
+                if (variavel == null) {
+                    throw new SemanticError("Erro semântico");
+                }
+                tipo1 = variavel.getTipo();
+                tipo2 = pilha.pop();
+                if (tipo1 != tipo2) {
+                    throw new SemanticError("Erro semântico");
+                }
+                if (tipo1 == Tipos.t_int64) {
+                    codigoGerado.append("conv.i8");
+                }
+                codigoGerado.append("stloc ");
+                codigoGerado.append(operador);
+                pularLinha();
+                break;
+            case 35:
+                for(String id : listaVariaveis) {
+                    variavel = variavelExiste(id);
+                    if (variavel == null) {
+                        throw new SemanticError("Erro semântico");
+                    }
+                    tipo1 = variavel.getTipo();
+                    String classe = "";
+                    String tipo = "";
+                    if (tipo1 == Tipos.t_int64) {
+                        classe = "Int64";
+                        tipo = "int64";
+                    } else if (tipo1 == Tipos.t_float64) {
+                        classe = "Double";
+                        tipo = "float64";
+                    }
+
+                    codigoGerado.append("call string [mscorlib]System.Console::ReadLine()");
+                    pularLinha();
+                    codigoGerado.append("call ");
+                    codigoGerado.append(tipo);
+                    codigoGerado.append(" [mscorlib]System.");
+                    codigoGerado.append(classe);
+                    codigoGerado.append("::Parse(string)");
+                    pularLinha();
+                    codigoGerado.append("stloc ");
+                    codigoGerado.append(id);
+                    pularLinha();
+                }
+                listaVariaveis.clear();
+                break;
         }
     }
 
@@ -235,7 +288,7 @@ public class Semantico implements Constants {
     }
 
     public Variavel variavelExiste(String id) {
-        for(Variavel v : listaVariaveis) {
+        for (Variavel v : tabelaVariaveis) {
             if (v.getId() == id) {
                 return v;
             }
@@ -248,7 +301,7 @@ public class Semantico implements Constants {
             Variavel v = new Variavel();
             v.setId(id);
             v.setTipo(tipo);
-            listaVariaveis.add(v);
+            tabelaVariaveis.add(v);
         } else {
             throw new Exception("Variavel já usada.");
         }
