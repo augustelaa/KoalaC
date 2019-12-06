@@ -14,6 +14,7 @@ public class Semantico implements Constants {
     Stack<Tipos> pilha = new Stack<Tipos>();
     Stack<String> listaVariaveis = new Stack<String>();
     List<Variavel> tabelaVariaveis = new ArrayList<Variavel>();
+    int tamanho = 0;
 
 
     public void executeAction(int action, Token token) throws SemanticError {
@@ -217,6 +218,20 @@ public class Semantico implements Constants {
                 codigoGerado.append("}");
                 criarFonte();
                 break;
+            case 20:
+                pilha.push(Tipos.t_string);
+                codigoGerado.append("ldstr ");
+                codigoGerado.append(token.getLexeme());
+                pularLinha();
+                break;
+            case 31:
+                Variavel v = new Variavel();
+                v.setTamanho(tamanho);
+                tamanho = 0;
+                v.setId(listaVariaveis.pop());
+                //v.setTipo();
+                //adicionarVariavel();
+                break;
             case 33:
                 operador = token.getLexeme();
                 variavel = variavelExiste(operador);
@@ -238,15 +253,18 @@ public class Semantico implements Constants {
                     throw new SemanticError("Erro semântico");
                 }
                 tipo1 = variavel.getTipo();
-                tipo2 = pilha.pop();
-                if (tipo1 != tipo2) {
-                    throw new SemanticError("Erro semântico");
-                }
                 if (tipo1 == Tipos.t_int64) {
                     codigoGerado.append("conv.i8");
                 }
-                codigoGerado.append("stloc ");
-                codigoGerado.append(operador);
+
+                if (variavel.getTamanho() > 0) {
+                    codigoGerado.append("stelem ");
+                    codigoGerado.append(variavel.getTipo());
+                    pularLinha();
+                } else {
+                    codigoGerado.append("stloc ");
+                    codigoGerado.append(operador);
+                }
                 pularLinha();
                 break;
             case 35:
@@ -279,6 +297,9 @@ public class Semantico implements Constants {
                     pularLinha();
                 }
                 listaVariaveis.clear();
+                break;
+            case 36:
+                tamanho = Integer.parseInt(token.getLexeme());
                 break;
         }
     }
