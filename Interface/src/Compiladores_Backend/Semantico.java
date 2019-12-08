@@ -14,7 +14,9 @@ public class Semantico implements Constants {
     Stack<Tipos> pilha = new Stack<Tipos>();
     Stack<String> listaVariaveis = new Stack<String>();
     List<Variavel> tabelaVariaveis = new ArrayList<Variavel>();
+    Stack<String> rotulos = new Stack<String>();
     int tamanho = 0;
+    int contadorRotulos = 0;
 
 
     public void executeAction(int action, Token token) throws SemanticError {
@@ -301,6 +303,24 @@ public class Semantico implements Constants {
             case 36:
                 tamanho = Integer.parseInt(token.getLexeme());
                 break;
+            case 39:
+                codigoGerado.append("brfalse ");
+                codigoGerado.append(adicionarRotulo());
+                pularLinha();
+                break;
+            case 40:
+                codigoGerado.append(rotulos.pop());
+                codigoGerado.append(":");
+                pularLinha();
+                break;
+            case 41:
+                String rotulo_aux = rotulos.pop();
+                codigoGerado.append("br ");
+                codigoGerado.append(adicionarRotulo());
+                pularLinha();
+                codigoGerado.append(rotulo_aux);
+                codigoGerado.append(":");
+                pularLinha();
         }
     }
 
@@ -315,6 +335,12 @@ public class Semantico implements Constants {
             }
         }
         return null;
+    }
+
+    public String adicionarRotulo() {
+        String rotulo = "r" + (contadorRotulos+1);
+        rotulos.push(rotulo);
+        return rotulo;
     }
 
     public void adicionarVariavel(String id, Tipos tipo) throws Exception {
