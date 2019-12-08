@@ -12,8 +12,6 @@ public class Semantico implements Constants {
 
     StringBuilder codigoGerado = new StringBuilder();
     Stack<Tipos> pilha = new Stack<Tipos>();
-    Stack<String> pilhaMarcLacos = new Stack<String>();
-    int marcCount = 1;
     Stack<String> listaVariaveis = new Stack<String>();
     List<Variavel> tabelaVariaveis = new ArrayList<Variavel>();
     Stack<String> rotulos = new Stack<String>();
@@ -43,7 +41,7 @@ public class Semantico implements Constants {
                     codigoGerado.append("add");
                     this.pularLinha();
                 } else {
-
+                    throw new SemanticError("Tipos incompatíveis em expressão aritmética");
                 }
                 break;
 
@@ -61,7 +59,7 @@ public class Semantico implements Constants {
                     codigoGerado.append("sub");
                     this.pularLinha();
                 } else {
-
+                    throw new SemanticError("Tipos incompatíveis em expressão aritmética");
                 }
                 break;
             case 3:
@@ -78,7 +76,7 @@ public class Semantico implements Constants {
                     codigoGerado.append("mul");
                     this.pularLinha();
                 } else {
-
+                    throw new SemanticError("Tipos incompatíveis em expressão aritmética");
                 }
                 break;
             case 4:
@@ -90,7 +88,7 @@ public class Semantico implements Constants {
                     if (tipo1.equals(tipo2)) {
                         pilha.push(tipo1);
                     } else {
-                        //Deu pau
+                        throw new SemanticError("Tipos incompatíveis em expressão aritmética");
                     }
                     codigoGerado.append("div");
                     this.pularLinha();
@@ -117,7 +115,7 @@ public class Semantico implements Constants {
                 if (tipo1 == Tipos.t_float64 || tipo1 == Tipos.t_int64) {
                     pilha.push(tipo1);
                 } else {
-                    throw new SemanticError("Erro semântico.");
+                    throw new SemanticError("Tipos incompatíveis em expressão aritmética");
                 }
                 break;
             case 8:
@@ -125,7 +123,7 @@ public class Semantico implements Constants {
                 if (tipo1 == Tipos.t_float64 || tipo1 == Tipos.t_int64) {
                     pilha.push(tipo1);
                 } else {
-                    throw new SemanticError("Erro semântico.");
+                    throw new SemanticError("Tipos incompatíveis em expressão aritmética");
                 }
                 codigoGerado.append("ldc.i8 -1");
                 pularLinha();
@@ -146,7 +144,7 @@ public class Semantico implements Constants {
                     if (tipo1.equals(tipo2)) {
                         pilha.push(Tipos.t_bool);
                     } else {
-                        //Deu pau
+                        throw new SemanticError("Tipos incompatíveis em expressão relacional");
                     }
                     switch (operador) {
                         case ">":
@@ -180,7 +178,7 @@ public class Semantico implements Constants {
                 if (tipo1.equals(Tipos.t_bool)) {
                     pilha.push(Tipos.t_bool);
                 } else {
-                    //Deu pai
+                    throw new SemanticError("Tipos incompatíveis em expressão lógica");
                 }
                 codigoGerado.append("ldc.i4.1");
                 pularLinha();
@@ -227,7 +225,7 @@ public class Semantico implements Constants {
                 if (tipo1.equals(Tipos.t_bool)) {
                     pilha.push(Tipos.t_bool);
                 } else {
-                    throw new SemanticError("Erro semântico");
+                    throw new SemanticError("Tipos incompatíveis em expressão relacional");
                 }
                 codigoGerado.append("and");
                 pularLinha();
@@ -239,7 +237,7 @@ public class Semantico implements Constants {
                 pularLinha();
                 break;
             case 30:
-                operador = token.getLexeme().substring(0,1).toUpperCase();
+                operador = token.getLexeme().substring(0, 1).toUpperCase();
                 switch (operador) {
                     case "I":
                         tipo = Tipos.t_int64;
@@ -257,7 +255,7 @@ public class Semantico implements Constants {
             case 31:
                 for (String var : listaVariaveis) {
                     if (variavelExiste(var) != null) {
-                        throw new SemanticError("Erro semântico");
+                        throw new SemanticError("Indentificador já declarado");
                     }
                     variavel = new Variavel();
                     variavel.setTipo(tipo);
@@ -280,7 +278,7 @@ public class Semantico implements Constants {
                 operador = token.getLexeme();
                 variavel = variavelExiste(operador);
                 if (variavel == null) {
-                    throw new SemanticError("Erro semântico");
+                    throw new SemanticError("Indentificador não declarado");
                 }
                 tipo1 = variavel.getTipo();
                 pilha.push(tipo1);
@@ -294,7 +292,7 @@ public class Semantico implements Constants {
                 operador = listaVariaveis.pop();
                 variavel = variavelExiste(operador);
                 if (variavel == null) {
-                    throw new SemanticError("Erro semântico");
+                    throw new SemanticError("Indentificador não declarado");
                 }
                 tipo1 = variavel.getTipo();
                 if (tipo1 == Tipos.t_int64) {
@@ -315,7 +313,7 @@ public class Semantico implements Constants {
                 for (String id : listaVariaveis) {
                     variavel = variavelExiste(id);
                     if (variavel == null) {
-                        throw new SemanticError("Erro semântico");
+                        throw new SemanticError("Indentificador não declarado");
                     }
                     tipo1 = variavel.getTipo();
                     String classe = "";
@@ -366,28 +364,29 @@ public class Semantico implements Constants {
                 pularLinha();
                 break;
             case 42:
-                marcCount++;
-                pilhaMarcLacos.push("r" + marcCount + ":");
-                codigoGerado.append("r" + marcCount + ":");
+                contadorRotulos++;
+
+                rotulos.push("r" + contadorRotulos + ":");
+                codigoGerado.append("r" + contadorRotulos + ":");
                 pularLinha();
                 break;
             case 43:
                 Tipos tipo = pilha.pop();
-                pilhaMarcLacos.pop();
+                rotulos.pop();
 
                 if (tipo == Tipos.t_bool) {
                     if (token.getLexeme().equals("istruedo")) {
-                        codigoGerado.append("brtrue" + pilhaMarcLacos.pop());
+                        codigoGerado.append("brtrue" + rotulos.pop());
                         pularLinha();
                     } else {
-                        codigoGerado.append("brfalse" + pilhaMarcLacos.pop());
+                        codigoGerado.append("brfalse" + rotulos.pop());
                         pularLinha();
                     }
                 }
                 break;
             case 44:
-                String lastIn = pilhaMarcLacos.pop();
-                String lastIn2 = pilhaMarcLacos.pop();
+                String lastIn = rotulos.pop();
+                String lastIn2 = rotulos.pop();
                 codigoGerado.append("br " + lastIn2);
                 pularLinha();
                 codigoGerado.append(lastIn);
@@ -410,7 +409,7 @@ public class Semantico implements Constants {
     }
 
     public String adicionarRotulo() {
-        String rotulo = "r" + (contadorRotulos+1);
+        String rotulo = "r" + (contadorRotulos + 1);
         rotulos.push(rotulo);
         return rotulo;
     }
