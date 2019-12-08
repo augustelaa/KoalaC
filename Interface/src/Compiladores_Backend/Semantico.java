@@ -16,6 +16,7 @@ public class Semantico implements Constants {
     List<Variavel> tabelaVariaveis = new ArrayList<Variavel>();
     Stack<String> rotulos = new Stack<String>();
     int tamanho = 0;
+    Tipos tipo = null;
     int contadorRotulos = 0;
 
 
@@ -226,13 +227,43 @@ public class Semantico implements Constants {
                 codigoGerado.append(token.getLexeme());
                 pularLinha();
                 break;
+            case 30:
+                operador = token.getLexeme().substring(0,1).toUpperCase();
+                switch (operador) {
+                    case "I":
+                        tipo = Tipos.t_int64;
+                        break;
+                    case "F":
+                        tipo = Tipos.t_float64;
+                        break;
+                    case "B":
+                        tipo = Tipos.t_bool;
+                        break;
+                    case "S":
+                        tipo = Tipos.t_string;
+                        break;
+                }
             case 31:
-                Variavel v = new Variavel();
-                v.setTamanho(tamanho);
+                for (String var : listaVariaveis) {
+                    if (variavelExiste(var) != null) {
+                        throw new SemanticError("Erro semântico");
+                    }
+                    variavel = new Variavel();
+                    variavel.setTipo(tipo);
+                    variavel.setTamanho(tamanho);
+                    variavel.setId(var);
+                    codigoGerado.append(".locals(");
+                    codigoGerado.append(Tipos.retornarOperadorDotNet(tipo));
+                    codigoGerado.append(" ");
+                    codigoGerado.append(var);
+                    codigoGerado.append(")");
+                    pularLinha();
+                }
                 tamanho = 0;
-                v.setId(listaVariaveis.pop());
-                //v.setTipo();
-                //adicionarVariavel();
+                listaVariaveis.clear();
+                break;
+            case 32:
+                listaVariaveis.push(token.getLexeme());
                 break;
             case 33:
                 operador = token.getLexeme();
@@ -278,13 +309,14 @@ public class Semantico implements Constants {
                     tipo1 = variavel.getTipo();
                     String classe = "";
                     String tipo = "";
+
                     if (tipo1 == Tipos.t_int64) {
                         classe = "Int64";
-                        tipo = "int64";
                     } else if (tipo1 == Tipos.t_float64) {
                         classe = "Double";
-                        tipo = "float64";
                     }
+
+                    tipo = Tipos.retornarOperadorDotNet(tipo1);
 
                     codigoGerado.append("call string [mscorlib]System.Console::ReadLine()");
                     pularLinha();
