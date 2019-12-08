@@ -12,13 +12,14 @@ public class Semantico implements Constants {
 
     StringBuilder codigoGerado = new StringBuilder();
     Stack<Tipos> pilha = new Stack<Tipos>();
+    Stack<String> pilhaMarcLacos = new Stack<String>();
+    int marcCount = 1;
     Stack<String> listaVariaveis = new Stack<String>();
     List<Variavel> tabelaVariaveis = new ArrayList<Variavel>();
     Stack<String> rotulos = new Stack<String>();
     int tamanho = 0;
     Tipos tipo = null;
     int contadorRotulos = 0;
-
 
     public void executeAction(int action, Token token) throws SemanticError {
         Tipos tipo1 = null;
@@ -311,7 +312,7 @@ public class Semantico implements Constants {
                 pularLinha();
                 break;
             case 35:
-                for(String id : listaVariaveis) {
+                for (String id : listaVariaveis) {
                     variavel = variavelExiste(id);
                     if (variavel == null) {
                         throw new SemanticError("Erro semântico");
@@ -363,6 +364,35 @@ public class Semantico implements Constants {
                 codigoGerado.append(rotulo_aux);
                 codigoGerado.append(":");
                 pularLinha();
+                break;
+            case 42:
+                marcCount++;
+                pilhaMarcLacos.push("r" + marcCount + ":");
+                codigoGerado.append("r" + marcCount + ":");
+                pularLinha();
+                break;
+            case 43:
+                Tipos tipo = pilha.pop();
+                pilhaMarcLacos.pop();
+
+                if (tipo == Tipos.t_bool) {
+                    if (token.getLexeme().equals("istruedo")) {
+                        codigoGerado.append("brtrue" + pilhaMarcLacos.pop());
+                        pularLinha();
+                    } else {
+                        codigoGerado.append("brfalse" + pilhaMarcLacos.pop());
+                        pularLinha();
+                    }
+                }
+                break;
+            case 44:
+                String lastIn = pilhaMarcLacos.pop();
+                String lastIn2 = pilhaMarcLacos.pop();
+                codigoGerado.append("br " + lastIn2);
+                pularLinha();
+                codigoGerado.append(lastIn);
+                pularLinha();
+                break;
         }
     }
 
