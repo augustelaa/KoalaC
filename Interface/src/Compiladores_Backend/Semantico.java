@@ -221,6 +221,16 @@ public class Semantico implements Constants {
                 codigoGerado.append("}");
                 criarFonte();
                 break;
+            case 18:
+                tipo1 = pilha.pop();
+                if (tipo1.equals(Tipos.t_bool)) {
+                    pilha.push(Tipos.t_bool);
+                } else {
+                    throw new SemanticError("Erro semântico");
+                }
+                codigoGerado.append("and");
+                pularLinha();
+                break;
             case 20:
                 pilha.push(Tipos.t_string);
                 codigoGerado.append("ldstr ");
