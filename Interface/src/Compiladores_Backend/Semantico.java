@@ -1,5 +1,7 @@
 package Compiladores_Backend;
 
+import com.sun.xml.internal.ws.util.StringUtils;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -18,12 +20,14 @@ public class Semantico implements Constants {
     int tamanho = 0;
     Tipos tipo = null;
     int contadorRotulos = 0;
+    String operador = null;
 
     public void executeAction(int action, Token token) throws SemanticError {
+        System.out.println("Rodando " + action);
+
         Tipos tipo1 = null;
         Tipos tipo2 = null;
         Variavel variavel = null;
-        String operador = null;
 
         switch (action) {
 
@@ -160,7 +164,7 @@ public class Semantico implements Constants {
                     }
                     this.pularLinha();
                 } else {
-
+                    throw new SemanticError("Tipos incompatíveis em expressão relacional");
                 }
                 break;
             case 11:
@@ -192,7 +196,7 @@ public class Semantico implements Constants {
                     pularLinha();
                 }
                 codigoGerado.append("call void [mscorlib]System.Console::Write(");
-                codigoGerado.append(tipo1);
+                codigoGerado.append(Tipos.retornarOperadorDotNet(tipo1));
                 codigoGerado.append(")");
                 pularLinha();
                 break;
@@ -208,26 +212,40 @@ public class Semantico implements Constants {
                 break;
             case 16:
                 codigoGerado.append(".method static public void _principal() {");
-                criarFonte();
+                pularLinha();
                 codigoGerado.append(".entrypoint");
-                criarFonte();
+                pularLinha();
                 break;
             case 17:
                 codigoGerado.append("ret");
-                criarFonte();
+                pularLinha();
                 codigoGerado.append("}");
-                criarFonte();
+                pularLinha();
                 codigoGerado.append("}");
                 criarFonte();
                 break;
             case 18:
                 tipo1 = pilha.pop();
-                if (tipo1.equals(Tipos.t_bool)) {
+                tipo2 = pilha.pop();
+                if (tipo1.equals(Tipos.t_bool) && tipo2.equals(Tipos.t_bool)) {
+                    pilha.push(Tipos.t_bool);
                     pilha.push(Tipos.t_bool);
                 } else {
                     throw new SemanticError("Tipos incompatíveis em expressão relacional");
                 }
                 codigoGerado.append("and");
+                pularLinha();
+                break;
+            case 19:
+                tipo1 = pilha.pop();
+                tipo2 = pilha.pop();
+                if (tipo1.equals(Tipos.t_bool) && tipo2.equals(Tipos.t_bool)) {
+                    pilha.push(Tipos.t_bool);
+                    pilha.push(Tipos.t_bool);
+                } else {
+                    throw new SemanticError("Tipos incompatíveis em expressão relacional");
+                }
+                codigoGerado.append("or");
                 pularLinha();
                 break;
             case 20:
@@ -252,6 +270,7 @@ public class Semantico implements Constants {
                         tipo = Tipos.t_string;
                         break;
                 }
+                break;
             case 31:
                 for (String var : listaVariaveis) {
                     if (variavelExiste(var) != null) {
@@ -261,14 +280,34 @@ public class Semantico implements Constants {
                     variavel.setTipo(tipo);
                     variavel.setTamanho(tamanho);
                     variavel.setId(var);
+                    adicionarVariavel(variavel);
                     codigoGerado.append(".locals(");
-                    codigoGerado.append(Tipos.retornarOperadorDotNet(tipo));
-                    codigoGerado.append(" ");
-                    codigoGerado.append(var);
-                    codigoGerado.append(")");
+
+                    if (tamanho > 0) {
+                        codigoGerado.append(Tipos.retornarOperadorDotNet(tipo));
+                        codigoGerado.append("[] ");
+                        codigoGerado.append(var);
+                        codigoGerado.append(")");
+                        pularLinha();
+                        codigoGerado.append("ldc.i8 ");
+                        codigoGerado.append(tamanho);
+                        pularLinha();
+                        codigoGerado.append("newarr [mscorlib]System.");
+                        codigoGerado.append(StringUtils.capitalize(Tipos.retornarOperadorDotNet(tipo)));
+                        pularLinha();
+                        codigoGerado.append("stloc ");
+                        codigoGerado.append(var);
+                    } else {
+                        codigoGerado.append(Tipos.retornarOperadorDotNet(tipo));
+                        codigoGerado.append(" ");
+                        codigoGerado.append(var);
+                        codigoGerado.append(")");
+                    }
+
                     pularLinha();
                 }
                 tamanho = 0;
+                tipo = null;
                 listaVariaveis.clear();
                 break;
             case 32:
@@ -284,8 +323,10 @@ public class Semantico implements Constants {
                 pilha.push(tipo1);
                 codigoGerado.append("ldloc ");
                 codigoGerado.append(operador);
+                pularLinha();
                 if (tipo1 == Tipos.t_int64) {
                     codigoGerado.append("conv.r8");
+                    pularLinha();
                 }
                 break;
             case 34:
@@ -297,12 +338,12 @@ public class Semantico implements Constants {
                 tipo1 = variavel.getTipo();
                 if (tipo1 == Tipos.t_int64) {
                     codigoGerado.append("conv.i8");
+                    pularLinha();
                 }
 
                 if (variavel.getTamanho() > 0) {
                     codigoGerado.append("stelem ");
                     codigoGerado.append(variavel.getTipo());
-                    pularLinha();
                 } else {
                     codigoGerado.append("stloc ");
                     codigoGerado.append(operador);
@@ -344,6 +385,16 @@ public class Semantico implements Constants {
             case 36:
                 tamanho = Integer.parseInt(token.getLexeme());
                 break;
+            case 37:
+                operador = token.getLexeme();
+                codigoGerado.append("ldloc ");
+                codigoGerado.append(operador);
+                pularLinha();
+                break;
+            case 38:
+                codigoGerado.append("conv.i8");
+                pularLinha();
+                break;
             case 39:
                 codigoGerado.append("brfalse ");
                 codigoGerado.append(adicionarRotulo());
@@ -364,24 +415,22 @@ public class Semantico implements Constants {
                 pularLinha();
                 break;
             case 42:
-                contadorRotulos++;
-
-                rotulos.push("r" + contadorRotulos + ":");
-                codigoGerado.append("r" + contadorRotulos + ":");
+                codigoGerado.append(adicionarRotulo());
+                codigoGerado.append(":");
                 pularLinha();
                 break;
             case 43:
                 Tipos tipo = pilha.pop();
-                rotulos.pop();
 
                 if (tipo == Tipos.t_bool) {
-                    if (token.getLexeme().equals("istruedo")) {
-                        codigoGerado.append("brtrue" + rotulos.pop());
-                        pularLinha();
+                    if (token.getLexeme().equalsIgnoreCase("istruedo")) {
+                        codigoGerado.append("brfalse " + adicionarRotulo());
                     } else {
-                        codigoGerado.append("brfalse" + rotulos.pop());
-                        pularLinha();
+                        codigoGerado.append("brtrue " + adicionarRotulo());
                     }
+                    pularLinha();
+                } else {
+                    throw new SemanticError("Erro semantico.");
                 }
                 break;
             case 44:
@@ -390,6 +439,7 @@ public class Semantico implements Constants {
                 codigoGerado.append("br " + lastIn2);
                 pularLinha();
                 codigoGerado.append(lastIn);
+                codigoGerado.append(":");
                 pularLinha();
                 break;
         }
@@ -401,7 +451,7 @@ public class Semantico implements Constants {
 
     public Variavel variavelExiste(String id) {
         for (Variavel v : tabelaVariaveis) {
-            if (v.getId() == id) {
+            if (v.getId().equals(id)) {
                 return v;
             }
         }
@@ -409,7 +459,8 @@ public class Semantico implements Constants {
     }
 
     public String adicionarRotulo() {
-        String rotulo = "r" + (contadorRotulos + 1);
+        contadorRotulos++;
+        String rotulo = "r" + contadorRotulos;
         rotulos.push(rotulo);
         return rotulo;
     }
@@ -425,8 +476,12 @@ public class Semantico implements Constants {
         }
     }
 
+    public void adicionarVariavel(Variavel v) {
+        tabelaVariaveis.add(v);
+    }
+
     public void criarFonte() {
-        File file = new File("fonte.txt");
+        File file = new File("fonte.il");
         BufferedWriter writer = null;
         try {
             writer = new BufferedWriter(new FileWriter(file));
